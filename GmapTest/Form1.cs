@@ -119,7 +119,7 @@ namespace GmapTest
         RouterDb routerDb;
         private void toolStripButton6_Click(object sender, EventArgs e)// тестовая кнопка, убрать
         {
-
+            //
              markers.Clear();
              gMapControl1.Overlays.Clear();
              List<PointLatLng> list = new List<PointLatLng>();
