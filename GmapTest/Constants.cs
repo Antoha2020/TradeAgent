@@ -15,7 +15,7 @@ namespace GmapTest
         public static string PASSWORD = "Kai2019%";
         public static double EARTH_RADIUS = 6372795;//радиус земного шара, м
 
-        public static double calculateTheDistance(double lt1, double ln1, double lt2, double ln2)//вычисляет расстояние между двумя точками
+        public static double getDistance(double lt1, double ln1, double lt2, double ln2)//вычисляет расстояние между двумя точками
         {
             // перевести координаты в радианы
             double lt1Rad = lt1 * Math.PI / 180;

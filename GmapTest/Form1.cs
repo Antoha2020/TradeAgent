@@ -2,6 +2,7 @@
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using GMap.NET.WindowsForms.ToolTips;
 using Itinero;
 using Itinero.IO.Osm;
 using Itinero.LocalGeo;
@@ -22,25 +23,19 @@ namespace GmapTest
     {
         private DBHandler db;
         GMapOverlay markers = new GMapOverlay("markers");//все маркеры, которые есть на карте
-        
+
+        GMapOverlay markersOverlayStartFin = new GMapOverlay("marker");
+        private bool StartFinish = false;
+        double FirstLat = 0, FirstLng = 0;
+        private List<PointLatLng> TwoPointDist = new List<PointLatLng>();
+        double SumDist = 0;
+        int CountPts = 1;
+
         public Form1()
         {
             InitializeComponent();
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
-
-            GMaps.Instance.Mode = AccessMode.ServerOnly;
-            gMapControl1.SetPositionByKeywords("Paris, France");
-            gMapControl1.ShowCenter = false;
-
-            GMapOverlay markers = new GMapOverlay("markers");
-            GMapMarker marker = new GMarkerGoogle(
-                new PointLatLng(48.8617774, 2.349272),
-                GMarkerGoogleType.blue_pushpin);
-            markers.Markers.Add(marker);
-            gMapControl1.Overlays.Add(markers);
-            db = new DBHandler();
-            db.DBConnection();
-            
+            GMaps.Instance.Mode = AccessMode.ServerOnly;            
         }        
 
         private void googleMapsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -79,20 +74,20 @@ namespace GmapTest
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            Fact fact = new Fact(gMapControl1);
-            fact.Show();
+            //Fact fact = new Fact(gMapControl1);
+            //fact.Show();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            Plan plan = new Plan();
-            plan.Show();
+            //Plan plan = new Plan();
+            //plan.Show();
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            Reports reports = new Reports();
-            reports.Show();
+            //Reports reports = new Reports();
+            //reports.Show();
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -120,7 +115,7 @@ namespace GmapTest
         private void toolStripButton6_Click(object sender, EventArgs e)// тестовая кнопка, убрать
         {
             //
-             markers.Clear();
+             /*markers.Clear();
              gMapControl1.Overlays.Clear();
              List<PointLatLng> list = new List<PointLatLng>();
              List<int> numbers = new List<int>();
@@ -137,7 +132,7 @@ namespace GmapTest
              gMapControl1.Zoom++;
              gMapControl1.Zoom--;
              gMapControl1.Refresh();
-
+             */
             //---------------------------------------------------------------------------------
             /* StreamReader reader = new StreamReader("004075.gps");
              string s = "";
@@ -263,25 +258,179 @@ namespace GmapTest
             return Math.Round(Dist / 1000, 3);
         }
 
-       /* private void ReDrawPoints()
+        private void gMapControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            gMapControl1.Overlays.Clear();
-            for (int r = markersOverlay.Markers.Count - 1; r >= 0; r--)
-                markersOverlay.Markers.RemoveAt(r);
 
-            for (int i = 0; i < Reg.TradePoints.Count; i++)
+
+            /*List<double> xp = new List<double>();
+            List<double> yp = new List<double>();
+            if (e.Button == MouseButtons.Right)
             {
-                GMarkerGoogle marker = null;
-                if (Reg.TradePoints[i].CodeTradePoint == "Start")
-                    marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), GMarkerGoogleType.pink_dot);
-                else
-                    marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), col[Reg.TradePoints[i].Color]);
-                marker.ToolTip = new GMapRoundedToolTip(marker);
-                marker.ToolTipText = Reg.TradePoints[i].Number.ToString() + "_" + Reg.TradePoints[i].Adress;
-                markersOverlay.Markers.Add(marker);
+                textBox2.Text = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lat.ToString();
+                textBox4.Text = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lng.ToString();
+            }*/
+            if (toolStripButton4.Checked)
+            {
+                GMarkerGoogle marker;
+                double Lat = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lat;
+                double Lng = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lng;
+                if (e.Button == MouseButtons.Right)
+                {
+
+                    if (!StartFinish)
+                    {
+                        FirstLat = Lat;
+                        FirstLng = Lng;
+                        marker = new GMarkerGoogle(new PointLatLng(FirstLat, FirstLng), GMarkerGoogleType.blue_pushpin);
+
+                        marker.ToolTip = new GMapRoundedToolTip(marker);
+                        marker.ToolTipText = "Точка " + CountPts.ToString() + ":\n" + Math.Round(FirstLat, 5).ToString() +
+                            "  " + Math.Round(FirstLng, 5).ToString() + "\nРасстояние: " + SumDist.ToString() + " км";
+                        markersOverlayStartFin.Markers.Add(marker);
+                        TwoPointDist.Add(new PointLatLng(FirstLat, FirstLng));
+                        StartFinish = true;
+                    }
+                    else
+                    {
+                        marker = new GMarkerGoogle(new PointLatLng(Lat, Lng), GMarkerGoogleType.pink_pushpin);
+                        marker.ToolTip = new GMapRoundedToolTip(marker);
+
+                        SumDist += Math.Round(Constants.getDistance(FirstLat, FirstLng, Lat, Lng) / 1000, 3);
+                        marker.ToolTipText = "Точка " + (++CountPts).ToString() + ":\n" + Math.Round(Lat, 5).ToString() +
+                            "  " + Math.Round(Lng, 5).ToString() + "\nРасстояние: " + SumDist.ToString() + " км";
+
+                        markersOverlayStartFin.Markers.Add(marker);
+
+                        TwoPointDist.Add(new PointLatLng(Lat, Lng));
+                        GMapRoute r = new GMapRoute(TwoPointDist, "Route");
+                        r.IsVisible = true;
+                        r.Stroke = new Pen(Color.Blue, 2);
+                        markersOverlayStartFin.Routes.Add(r);
+
+                        FirstLat = Lat;
+                        FirstLng = Lng;
+                    }
+
+                }
+
+
+                if (e.Button == MouseButtons.Left && (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+                {
+                    marker = new GMarkerGoogle(new PointLatLng(Lat, Lng), GMarkerGoogleType.blue_pushpin);
+                    marker.ToolTip = new GMapRoundedToolTip(marker);
+
+                    SumDist += Math.Round(Constants.getDistance(FirstLat, FirstLng, Lat, Lng) / 1000, 3);
+                    marker.ToolTipText = "Точка " + (++CountPts).ToString() + ":\n" + Math.Round(Lat, 5).ToString() +
+                        "  " + Math.Round(Lng, 5).ToString() + "\nРасстояние: " + SumDist.ToString() + " км";
+
+                    markersOverlayStartFin.Markers.Add(marker);
+
+                    TwoPointDist.Add(new PointLatLng(Lat, Lng));
+                    GMapRoute r = new GMapRoute(TwoPointDist, "Route");
+                    r.IsVisible = true;
+                    r.Stroke = new Pen(Color.Blue, 2);
+                    markersOverlayStartFin.Routes.Add(r);
+                    SumDist = 0;
+
+                    StartFinish = false;
+                    TwoPointDist.Clear();
+                    CountPts = 1;
+                }
+
+                gMapControl1.Overlays.Add(markersOverlayStartFin);
+                gMapControl1.Zoom += 0.1;
+                gMapControl1.Zoom -= 0.1;
             }
-            gMapControl1.Overlays.Add(markersOverlay);
-            gMapControl1.Refresh();
-        }*/
+            /* if (e.Button == MouseButtons.Right && (Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+             {
+                 textBox1.Text = "Записать в файл";
+                 textBox1.Enabled = false;
+
+                 if (ChangeSector.Count > 0)// в дальнейшем возможно убрать
+                 {
+                     for (int i = polyOverlayChange.Polygons.Count - 1; i >= 0; i--)
+                         polyOverlayChange.Polygons.RemoveAt(i);
+                     for (int i = polyOverlayBordersPolyChange.Polygons.Count - 1; i >= 0; i--)
+                         polyOverlayBordersPolyChange.Polygons.RemoveAt(i);
+                     for (int i = ChangeSector.Count - 1; i >= 0; i--)
+                         ChangeSector.RemoveAt(i);
+                 }
+                 pointsHalfWeek.Add(new PointLatLng(gMapControl1.FromLocalToLatLng(e.X, e.Y).Lat, gMapControl1.FromLocalToLatLng(e.X, e.Y).Lng));
+                 if (pointsHalfWeek.Count > 1)
+                 {
+                     List<PointLatLng> TwoPoints = new List<PointLatLng>();
+                     TwoPoints.Add(pointsHalfWeek[pointsHalfWeek.Count - 2]);
+                     TwoPoints.Add(pointsHalfWeek[pointsHalfWeek.Count - 1]);
+
+                     GMapPolygon polygon1 = new GMapPolygon(TwoPoints, "mypolygon");
+                     polygon1.Fill = new SolidBrush(Color.FromArgb(50, 105, 105, 105));
+                     polygon1.Stroke = new Pen(Color.FromArgb(105, 105, 105), 1);
+                     polyOverlayBordersPolyChange.Polygons.Add(polygon1);
+                     gMapControl1.Overlays.Add(polyOverlayBordersPolyChange);
+
+                 }
+             }
+
+             if (e.Button == MouseButtons.Right && (Control.ModifierKeys & Keys.Control) == Keys.Control)
+             {
+                 polygonHalfWeek = new GMapPolygon(pointsHalfWeek, "mypolygon");
+                 //GMapOverlay polyOverlayChange = new GMapOverlay("polygons");
+                 polygonHalfWeek.Fill = new SolidBrush(Color.FromArgb(10, 0, 255, 0));
+                 polygonHalfWeek.Stroke = new Pen(Color.FromArgb(255, 0, 255, 0), 2);
+                 polyOverlayChange.Polygons.Add(polygonHalfWeek);
+                 gMapControl1.Overlays.Add(polyOverlayChange);
+
+                 for (int i = 0; i < pointsHalfWeek.Count; i++)
+                 {
+                     xp.Add(pointsHalfWeek[i].Lat);
+                     yp.Add(pointsHalfWeek[i].Lng);
+                 }
+                 InsidePolygonChangeSector(xp, yp);
+                 NewChangeSector();
+                 label9.Text = label15.Text = CountInDisrt.ToString();
+                 CountInDisrt = 0;
+                 for (int i = pointsHalfWeek.Count - 1; i >= 0; i--)
+                     pointsHalfWeek.RemoveAt(i);
+
+                 textBox1.Enabled = true;
+                 textBox1.Text = "";
+             }*/
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            if (!toolStripButton4.Checked)
+            {
+                SumDist = 0;
+                StartFinish = false;
+                TwoPointDist.Clear();
+                CountPts = 0;
+                markersOverlayStartFin.Clear();
+                gMapControl1.Overlays.Clear();
+                gMapControl1.Zoom += 0.1;
+                gMapControl1.Zoom -= 0.1;
+            }
+        }
+
+        /* private void ReDrawPoints()
+         {
+             gMapControl1.Overlays.Clear();
+             for (int r = markersOverlay.Markers.Count - 1; r >= 0; r--)
+                 markersOverlay.Markers.RemoveAt(r);
+
+             for (int i = 0; i < Reg.TradePoints.Count; i++)
+             {
+                 GMarkerGoogle marker = null;
+                 if (Reg.TradePoints[i].CodeTradePoint == "Start")
+                     marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), GMarkerGoogleType.pink_dot);
+                 else
+                     marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), col[Reg.TradePoints[i].Color]);
+                 marker.ToolTip = new GMapRoundedToolTip(marker);
+                 marker.ToolTipText = Reg.TradePoints[i].Number.ToString() + "_" + Reg.TradePoints[i].Adress;
+                 markersOverlay.Markers.Add(marker);
+             }
+             gMapControl1.Overlays.Add(markersOverlay);
+             gMapControl1.Refresh();
+         }*/
     }
 }
