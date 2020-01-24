@@ -333,7 +333,7 @@ namespace GmapTest
                 }
 
 
-                if (e.Button == MouseButtons.Left && (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+                if (e.Button == MouseButtons.Left && (Control.ModifierKeys & Keys.Shift) == Keys.Shift && StartFinish)
                 {
                     marker = new GMarkerGoogle(new PointLatLng(Lat, Lng), GMarkerGoogleType.blue_pushpin);
                     marker.ToolTip = new GMapRoundedToolTip(marker);

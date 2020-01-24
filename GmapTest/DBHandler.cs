@@ -18,7 +18,27 @@ namespace GmapTest
             conn = new MySqlConnection(connString);            
         }
 
+        public string getAuth(string Login, string pwd)
+        {
+            DBConnection();
+            conn.Open();
+            MySqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM users";
+            MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                if (reader["login"].Equals(Login) && reader["password"].Equals(pwd))
+                {
+                    reader.Close();
+                    conn.Close();
+                    return Login;
+                }
+            }
 
+            reader.Close();
+            conn.Close();
+            return null;
+        }
 
 
         public Dictionary<long,PointLatLng> getDataTEST(string table)
