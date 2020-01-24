@@ -35,7 +35,8 @@ namespace GmapTest
         {
             InitializeComponent();
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
-            GMaps.Instance.Mode = AccessMode.ServerOnly;            
+            GMaps.Instance.Mode = AccessMode.ServerOnly;
+            Logger.Log.Info("Start main form");
         }        
 
         private void googleMapsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -76,10 +77,28 @@ namespace GmapTest
         {
             //Fact fact = new Fact(gMapControl1);
             //fact.Show();
+            toolStripButton2.Checked = false;
+            if (toolStripButton1.Checked)
+            {
+                panel1.Visible = true;
+                panel2.Visible = false;
+
+            }
+            else
+                panel1.Visible = false;
+
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
+            toolStripButton1.Checked = false;
+            if (toolStripButton2.Checked)
+            {
+                panel1.Visible = false;
+                panel2.Visible = true;
+            }
+            else
+                panel2.Visible = false;
             //Plan plan = new Plan();
             //plan.Show();
         }
@@ -395,6 +414,11 @@ namespace GmapTest
                  textBox1.Enabled = true;
                  textBox1.Text = "";
              }*/
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
         private void toolStripButton4_Click(object sender, EventArgs e)

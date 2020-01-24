@@ -46,6 +46,8 @@
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.toolStrip1.SuspendLayout();
@@ -178,6 +180,7 @@
             // 
             // toolStripButton1
             // 
+            this.toolStripButton1.CheckOnClick = true;
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton1.Image = global::GmapTest.Properties.Resources.fact;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -189,6 +192,7 @@
             // 
             // toolStripButton2
             // 
+            this.toolStripButton2.CheckOnClick = true;
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton2.Image = global::GmapTest.Properties.Resources.plan1;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -241,11 +245,32 @@
             this.toolStripButton5.Text = "toolStripButton5";
             this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Yellow;
+            this.panel1.Location = new System.Drawing.Point(38, 25);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(377, 368);
+            this.panel1.TabIndex = 5;
+            this.panel1.Visible = false;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.YellowGreen;
+            this.panel2.Location = new System.Drawing.Point(37, 24);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(377, 368);
+            this.panel2.TabIndex = 6;
+            this.panel2.Visible = false;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1083, 628);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.gMapControl1);
@@ -286,6 +311,8 @@
         private System.Windows.Forms.ToolStripMenuItem справкаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem оПрограммеToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton6;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

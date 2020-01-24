@@ -18,6 +18,9 @@ namespace GmapTest
             conn = new MySqlConnection(connString);            
         }
 
+
+
+
         public Dictionary<long,PointLatLng> getDataTEST(string table)
         {
             try

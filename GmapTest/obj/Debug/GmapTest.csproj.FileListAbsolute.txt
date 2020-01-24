@@ -1021,3 +1021,6 @@ D:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.CoreCompileInputs.cache
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.CopyComplete
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.exe
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.pdb
+D:\TradeAgent\GmapTest\bin\Debug\log4net.dll
+D:\TradeAgent\GmapTest\bin\Debug\log4net.xml
+D:\TradeAgent\GmapTest\obj\Debug\GmapTest.Authorization.resources

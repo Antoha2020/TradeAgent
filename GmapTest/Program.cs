@@ -16,6 +16,7 @@ namespace GmapTest
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Logger.InitLogger();
             Application.Run(new Form1());
         }
     }

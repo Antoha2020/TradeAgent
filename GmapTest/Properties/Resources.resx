@@ -121,6 +121,9 @@
   <data name="reports" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\images\reports.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="geozone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\bin\Debug\images\geozone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="fact" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\images\fact.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -136,7 +139,7 @@
   <data name="ruler" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\images\ruler.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="geozone" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\bin\Debug\images\geozone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="root" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\bin\Debug\images\root.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
