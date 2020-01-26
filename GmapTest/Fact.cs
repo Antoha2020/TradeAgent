@@ -25,8 +25,8 @@ namespace GmapTest
         public Fact(GMap.NET.WindowsForms.GMapControl gmapControl1)
         {
             InitializeComponent();
-            db = new DBHandler();
-            db.DBConnection();
+          /*  db = new DBHandler();
+            db.DBConnection();*/
 
             this.gmapControl1 = gmapControl1;
             counter++;
@@ -98,7 +98,7 @@ namespace GmapTest
         private void button1_Click(object sender, EventArgs e)
         {
 
-            Route rt = new Route(db.getDataTEST("route1111_18122019"));
+           /* Route rt = new Route(db.getDataTEST("route1111_18122019"));
             //получить сериализованную строку байтов
             string s = "";
             MemoryStream ms = new MemoryStream();
@@ -107,12 +107,12 @@ namespace GmapTest
             byte[] bytes = ms.ToArray();
             s = BitConverter.ToString(bytes);
             s = s.Replace("-", "");
-            db.insertSerializeTEST("1111","18.12.2019", s);
+            db.insertSerializeTEST("1111","18.12.2019", s);*/
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string str = db.getSerialTEST();
+/*string str = db.getSerialTEST();
             byte[] bytes = Enumerable.Range(0, str.Length)
                                     .Where(x => x % 2 == 0)
                                     .Select(x => Convert.ToByte(str.Substring(x, 2), 16))
@@ -126,7 +126,7 @@ namespace GmapTest
             rt = (Route)formatter.Deserialize(stream);
 
             List<PointLatLng> routePoints1 = new List<PointLatLng>();
-            foreach (KeyValuePair<long, PointLatLng> dic in rt.listPoints)
+           foreach (KeyValuePair<long, PointLatLng> dic in rt.listPoints)
             {
                 routePoints1.Add(dic.Value);
             }
@@ -139,7 +139,7 @@ namespace GmapTest
             gmapControl1.Position = routePoints1[routePoints1.Count - 1];
             gmapControl1.Overlays.Add(markers);
             gmapControl1.Zoom = 12;
-            gmapControl1.Refresh();
+            gmapControl1.Refresh();*/
         }
     }
 }

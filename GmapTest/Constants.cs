@@ -8,12 +8,25 @@ namespace GmapTest
 {
     class Constants
     {
-        public static string HOST = "35.198.91.129";
-        public static int PORT = 3306;
-        public static string DATABASE = "logistics";
-        public static string USERNAME = "userdb";
-        public static string PASSWORD = "Kai2019%";
-        public static double EARTH_RADIUS = 6372795;//радиус земного шара, м
+        public const string HOST = "35.198.91.129";
+        public const int PORT = 3306;
+        public const string DATABASE = "logistics";
+        public const string USERNAME = "userdb";
+        public const string PASSWORD = "Kai2019%";
+        public const double EARTH_RADIUS = 6372795;//радиус земного шара, м
+        public const double STOP_TIME_IN_POINT = 60;//время в секундах, которые считаются остановкой
+        public const int CRITICAL_DISTANCE = 2500;//максимальное расстояние между строчками факта, после которого остановка не считается...
+        public const double RADIUS_SMOOTH = 50;//радиус окружности, в границах которой сглаживаются маршруты
+        public const double DegInRad = Math.PI / 180;// 0.0174533;//1 градус в радианах
+        public const int ParallelDist = 111000;//расстояние между параллелями (48)
+        public const int MeridianDist = 74000;//примерное расстояние между меридианами для Днепропетровской обл (35)
+        public static double RADIUS = 160; //величина радиуса, в котором определяются точки посещения
+        public static int NUM_CORNERS = 20;//количество углов в многоугольнике, который принимается за окружность 
+
+        public const string Path_fact = "./Fact routes";
+        public const string Path_db = "./DB";
+        public const string Path_plan = "./Plan routes/";//путь, по которому находятся плановые маршруты
+
 
         public static double getDistance(double lt1, double ln1, double lt2, double ln2)//вычисляет расстояние между двумя точками
         {
@@ -42,6 +55,11 @@ namespace GmapTest
 
             //return Math.Round(dist/1000,3);
             return dist;
+        }
+
+        public static int GetSeconds(DateTime dt)
+        {
+            return dt.Hour * 3600 + dt.Minute * 60 + dt.Second;
         }
     }
 }

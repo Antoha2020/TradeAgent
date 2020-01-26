@@ -10,15 +10,15 @@ namespace GmapTest
 {
     class DBHandler
     {
-        public MySqlConnection conn;
-        public void DBConnection()
+        public static MySqlConnection conn;
+        public static void DBConnection()
         {
             String connString = "Server=" + Constants.HOST + ";Database=" + Constants.DATABASE
                 + ";port=" + Constants.PORT + ";User Id=" + Constants.USERNAME + ";password=" + Constants.PASSWORD;
             conn = new MySqlConnection(connString);            
         }
 
-        public string getAuth(string Login, string pwd)
+        public string getAuth(string Login, string pwd) //проверка логина и пароля в базе данных
         {
             DBConnection();
             conn.Open();
@@ -40,6 +40,24 @@ namespace GmapTest
             return null;
         }
 
+        public static List<Route> GetListRoutes()
+        {
+            List<Route> listRoutes = new List<Route>();
+            DBConnection();
+            conn.Open();
+            MySqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM routes";
+            MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                listRoutes.Add(new Route(reader["codeGPS"].ToString(), reader["name"].ToString(), reader["latBeg"].ToString(),
+                    reader["lonBeg"].ToString(), reader["team"].ToString(), reader["branch"].ToString()));                
+            }
+
+            reader.Close();
+            conn.Close();
+            return listRoutes;
+        }
 
         public Dictionary<long,PointLatLng> getDataTEST(string table)
         {
