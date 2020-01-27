@@ -1,6 +1,7 @@
 ﻿using GMap.NET;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,31 @@ namespace GmapTest
                 this.latBeg = Convert.ToDouble(latBeg);
             if (lonBeg != null && lonBeg != "")
                 this.lonBeg = Convert.ToDouble(lonBeg);
+            Logger.Log.Info("Создан объект Route");
+        }
+
+        public static List<PointLatLng> getPlanRoute(string FilePath)
+        {
+            List<PointLatLng> RoutePlan = new List<PointLatLng>();
+            string[] StrPlan;
+            if (!File.Exists(FilePath))
+                return null;
+
+            StreamReader reader = new StreamReader(FilePath, Encoding.Default);
+            string s = "";
+            while (true)
+            {
+                s = reader.ReadLine();
+                if (s == null || s == "")
+                    break;
+
+                StrPlan = s.Split(new Char[] { '\t', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                if (StrPlan[0] == "**")
+                    continue;
+                if (StrPlan[0] != "p")
+                    RoutePlan.Add(new PointLatLng(Convert.ToDouble(StrPlan[0]), Convert.ToDouble(StrPlan[1])));
+            }
+            return RoutePlan;
         }
     }
 }

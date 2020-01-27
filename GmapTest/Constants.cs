@@ -27,7 +27,7 @@ namespace GmapTest
         public const string Path_db = "./DB";
         public const string Path_plan = "./Plan routes/";//путь, по которому находятся плановые маршруты
 
-
+        public static bool firstDraw = false;
         public static double getDistance(double lt1, double ln1, double lt2, double ln2)//вычисляет расстояние между двумя точками
         {
             // перевести координаты в радианы

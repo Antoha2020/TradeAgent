@@ -26,9 +26,7 @@ namespace GmapTest
     {
         List<Route> listRoutes = new List<Route>();
         List<Point> TradePoints = new List<Point>();
-        string DirName = "";
-        String dbFileNameAutorization = Constants.Path_db + "/Authorization_db.db";
-        GMapOverlay markers = new GMapOverlay("markers");//все маркеры, которые есть на карте
+        string DirName = "";       
         GMapOverlay markersOverlay = new GMapOverlay("marker");
 
         GMapOverlay markersOverlayStartFin = new GMapOverlay("marker");
@@ -40,19 +38,33 @@ namespace GmapTest
         public Dictionary<string, List<Point>> PointsInRoute = new Dictionary<string, List<Point>>();
         public Dictionary<string, List<FactPoints>> LFP = new Dictionary<string, List<FactPoints>>();
 
+
+        //----для области-----------------
+        GMapPolygon polygonHalfWeek;
+        List<PointLatLng> pointsHalfWeek = new List<PointLatLng>();
+        //List<Elementary_route> List_ER = new List<Elementary_route>();
+        GMapOverlay polyOverlayRoute = new GMapOverlay("polygons");
+        GMapOverlay polyOverlayBordersPoly = new GMapOverlay("polygons");
+        GMapOverlay polyOverlayBordersPolyChange = new GMapOverlay("polygons");
+        GMapOverlay polyOverlayChange = new GMapOverlay("polygons");
+        GMapOverlay polyBorderRoute = new GMapOverlay("polygons");
+        List<Point> ChangeSector = new List<Point>();
+        int CountInDisrt = 0;
+
         public Form1()
         {
             InitializeComponent();
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
-            Logger.Log.Info("Start main form");
+            Logger.Log.Info("Main form start");
             listRoutes = DBHandler.GetListRoutes();//получение всех маршрутов, которые есть в системе
             SetComboBox();
         }        
 
         private void SetComboBox()
         {
-            foreach(Route rt in listRoutes)
+            Logger.Log.Info("SetComboBox");
+            foreach (Route rt in listRoutes)
             {
                 if (!comboBox1.Items.Contains(rt.Team))
                     comboBox1.Items.Add(rt.Team);
@@ -68,18 +80,21 @@ namespace GmapTest
 
         private void googleMapsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger.Log.Info("Выбрано Google карту");
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleMapProvider.Instance;
             gMapControl1.Refresh();
         }
 
         private void спутниковаяToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger.Log.Info("Выбрано спутниковую Google карту");
             gMapControl1.MapProvider = GoogleSatelliteMapProvider.Instance;
             gMapControl1.Refresh();
         }
 
         private void openStreetMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger.Log.Info("Выбрано OSM карту");
             gMapControl1.MapProvider = GMap.NET.MapProviders.OpenStreetMapProvider.Instance;
             gMapControl1.Refresh();
         }
@@ -102,8 +117,6 @@ namespace GmapTest
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            //Fact fact = new Fact(gMapControl1);
-            //fact.Show();
             toolStripButton2.Checked = false;
             if (toolStripButton1.Checked)
             {
@@ -126,14 +139,12 @@ namespace GmapTest
             }
             else
                 panel2.Visible = false;
-            //Plan plan = new Plan();
-            //plan.Show();
+            
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            //Reports reports = new Reports();
-            //reports.Show();
+            
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -158,6 +169,7 @@ namespace GmapTest
             gMapControl1.ShowTileGridLines = false;
             gMapControl1.ShowCenter = false;
             gMapControl1.DragButton = MouseButtons.Left;
+            Logger.Log.Info("Form1 загружена");
         }
 
         
@@ -166,160 +178,18 @@ namespace GmapTest
             trackBar1.Value = (int)gMapControl1.Zoom;
         }
 
-        RouterDb routerDb;
         private void toolStripButton6_Click(object sender, EventArgs e)// тестовая кнопка, убрать
         {
-            //
-             /*markers.Clear();
-             gMapControl1.Overlays.Clear();
-             List<PointLatLng> list = new List<PointLatLng>();
-             List<int> numbers = new List<int>();
-             Random rnd = new Random();
-             for (int i = 0; i < 2; i++)
-             {
-                 numbers.Add(rnd.Next(1, 20000));
-             }
-             list = db.getPointsTEST(numbers);
-             foreach (PointLatLng pt in list)
-                 markers.Markers.Add(new GMarkerGoogle(pt, GMarkerGoogleType.green_small));
-
-             gMapControl1.Overlays.Add(markers);
-             gMapControl1.Zoom++;
-             gMapControl1.Zoom--;
-             gMapControl1.Refresh();
-             */
-            //---------------------------------------------------------------------------------
-            /* StreamReader reader = new StreamReader("004075.gps");
-             string s = "";
-             double latRoute = 0, lngRoute = 0;
-             long tm = 0;
-             List<double> lt = new List<double>();
-             List<double> ln = new List<double>();
-             List<long> time = new List<long>(); 
-             while (true)
-             {
-                 s = reader.ReadLine();
-                 if (s == null || s == "")
-                     break;
-
-                string [] StrArray1 = s.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                latRoute = Convert.ToDouble(StrArray1[1]) / 100 - (int)Convert.ToDouble(StrArray1[1]) / 100;
-                lngRoute = Convert.ToDouble(StrArray1[2]) / 100 - (int)Convert.ToDouble(StrArray1[2]) / 100;
-
-                 latRoute = (int)Convert.ToDouble(StrArray1[1]) / 100 + latRoute * 100 / 60;
-                 lngRoute = (int)Convert.ToDouble(StrArray1[2]) / 100 + lngRoute * 100 / 60;
-
-                 lt.Add(latRoute);
-                 ln.Add(lngRoute);
-
-                 DateTimeOffset dt = DateTimeOffset.ParseExact(StrArray1[0], "dd.MM.yyyy HH:mm.ss", null); //Convert.ToDateTime(StrArray1[0]);
-
-
-                 tm = dt.ToUnixTimeMilliseconds();
-                 time.Add(tm);
-             }
-
-             db.insertFactTEST(lt, ln, time);*/
-            //--------------------------------------------------------------------------------------
-
-            /* GMapRoute r = new GMapRoute(db.getDataTEST(), "Route");
-             r.IsVisible = true;
-             r.Stroke = new Pen(Color.Green, 2);
-             // r.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-             markers.Routes.Add(r);
-
-             gMapControl1.Overlays.Add(markers);
-             gMapControl1.Refresh();*/
-
-           /* gMapControl1.Cursor = Cursors.WaitCursor;
-            routerDb = new RouterDb();
-            using (var stream = File.OpenRead("Dnepr.pbf"))
-            {
-                routerDb.LoadOsmData(stream, Vehicle.Car);
-            }
-            routerDb.AddContracted(Vehicle.Car.Fastest());
-
-            // comboBox1.Enabled = false;
-            GetDistRouteOSM(list[0], list[1], true);
-            gMapControl1.Cursor = Cursors.Default;*/
-        }
-
-        private double GetDistRouteOSM(Point Pa, Point Pb, bool Table)//расчет расстояния из OSM файла
-        {
-            List<PointLatLng> list = new List<PointLatLng>();
-            List<GMapRoute> ListRoute = new List<GMapRoute>();
-            double Dist = 0;
-            try
-            {
-                Router router = new Router(routerDb);
-                var route = router.Calculate(Vehicle.Car.Shortest(), new Coordinate((float)Pa.X, (float)Pa.Y),
-                     new Coordinate((float)(Pb.X), (float)(Pb.Y)));
-                var routeGeoJson = route.ToGeoJson();
-
-                JObject CoordinateSearch = JObject.Parse(routeGeoJson.ToString());
-                IList<JToken> results = CoordinateSearch["features"].Children().ToList();
-                IList<SearchResult> searchResults = new List<SearchResult>();
-
-                SearchResult searchResult;
-                foreach (JToken result in results)
-                {
-                    if (!result.ToString().Contains("\"type\": \"Point\""))
-                    {
-                        searchResult = JsonConvert.DeserializeObject<SearchResult>(result.ToString());
-                        searchResults.Add(searchResult);
-                        for (int d = 0; d < searchResult.geometry.coordinates.Length / 2; d++)
-                            list.Add(new GMap.NET.PointLatLng(searchResult.geometry.coordinates[d, 1], searchResult.geometry.coordinates[d, 0]));
-                        Dist = Math.Round(Convert.ToDouble(searchResult.properties.distance), 3);
-                    }
-
-                    /*GMapRoute r = new GMapRoute(list, "Route");
-                    r.IsVisible = true;
-                    r.Stroke.Color = Color.Red;//.DarkGreen;
-                    ListRoute.Add(r);*/
-
-                }
-                GMapRoute r = new GMapRoute(list, "Route");
-                r.IsVisible = true;
-                r.Stroke = new Pen(Color.Blue, 3);
-                ListRoute.Add(r);
-
-               // ErrorOSM = false;
-                /*if (Pb.CodeTradePoint != "Start")// || !Table)
-                {
-                    Pb.X = Pb.X + DeltaXOSM;
-                    Pb.Y = Pb.Y + DeltaYOSM;
-                }*/
-            }
-            catch
-            {
-                //ErrorOSM = true;
-                return 0;
-                //ListNoNodes.Add(Pb);
-                /*Dist = Math.Round(Math.Sqrt(Math.Pow((Pa.X - Pb.X) * Constant.ParallelDist, 2) + Math.Pow((Pa.Y - Pb.Y) * Constant.MeridianDist, 2)), 3);
-                list.Add(new PointLatLng(Pa.X, Pa.Y));
-                list.Add(new PointLatLng(Pb.X, Pb.Y));
-                GMapRoute r = new GMap.NET.WindowsForms.GMapRoute(list, "Route");
-                r.IsVisible = true;
-                r.Stroke.Color = Color.DarkGreen;*/
-                //ListRoute.Add(r);
-
-                //list.Add(new GMap.NET.PointLatLng(searchResult.geometry.coordinates[d, 1], searchResult.geometry.coordinates[d, 0]));
-            }
-
-           // Pb.RouteFromPrev = ListRoute;
-           // if (Dist < 10)
-             //   Dist = 0;
-            return Math.Round(Dist / 1000, 3);
+            
         }
 
         private void gMapControl1_MouseClick(object sender, MouseEventArgs e)
         {
+            //определение расстояния по прямой
 
-
-            /*List<double> xp = new List<double>();
+            List<double> xp = new List<double>();
             List<double> yp = new List<double>();
-            if (e.Button == MouseButtons.Right)
+            /*if (e.Button == MouseButtons.Right)
             {
                 textBox2.Text = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lat.ToString();
                 textBox4.Text = gMapControl1.FromLocalToLatLng(e.X, e.Y).Lng.ToString();
@@ -396,10 +266,12 @@ namespace GmapTest
                 gMapControl1.Zoom += 0.1;
                 gMapControl1.Zoom -= 0.1;
             }
-            /* if (e.Button == MouseButtons.Right && (Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+
+
+             if (e.Button == MouseButtons.Right && (Control.ModifierKeys & Keys.Alt) == Keys.Alt)
              {
-                 textBox1.Text = "Записать в файл";
-                 textBox1.Enabled = false;
+                 //textBox1.Text = "Записать в файл";
+                 //textBox1.Enabled = false;
 
                  if (ChangeSector.Count > 0)// в дальнейшем возможно убрать
                  {
@@ -442,23 +314,99 @@ namespace GmapTest
                  }
                  InsidePolygonChangeSector(xp, yp);
                  NewChangeSector();
-                 label9.Text = label15.Text = CountInDisrt.ToString();
+                 label7.Text = CountInDisrt.ToString();
                  CountInDisrt = 0;
                  for (int i = pointsHalfWeek.Count - 1; i >= 0; i--)
                      pointsHalfWeek.RemoveAt(i);
 
-                 textBox1.Enabled = true;
-                 textBox1.Text = "";
-             }*/
+                 //textBox1.Enabled = true;
+                 //textBox1.Text = "";
+             }
         }
 
+        private void NewChangeSector()
+        {
+            ChangeSector.Reverse();
+            for (int i = 0; i < ChangeSector.Count; i++)
+                for (int j = i + 1; j < ChangeSector.Count; j++)
+                {
+                    if (ChangeSector[i].CodeTradePoint == ChangeSector[j].CodeTradePoint)
+                    {
+                        ChangeSector.RemoveAt(j);
+                        j--;
+                    }
+                }
+        }
+
+        public void InsidePolygonChangeSector(List<double> xp, List<double> yp)
+        {
+            try
+            {
+                foreach (Point TrPoint in TradePoints)
+                {
+                    int intersections_num = 0;
+                    int prev = xp.Count - 1;
+                    bool prev_under = yp[prev] < TrPoint.Y;
+
+                    for (int i = 0; i < xp.Count; ++i)
+                    {
+                        bool cur_under = yp[i] < TrPoint.Y;
+
+                        double ax = xp[prev] - TrPoint.X;
+                        double ay = yp[prev] - TrPoint.Y;
+
+                        double bx = xp[i] - TrPoint.X;
+                        double by = yp[i] - TrPoint.Y;
+
+                        double t = (ax * (by - ay) - ay * (bx - ax));
+                        if (cur_under && !prev_under)
+                        {
+                            if (t > 0)
+                                intersections_num += 1;
+                        }
+                        if (!cur_under && prev_under)
+                        {
+                            if (t < 0)
+                                intersections_num += 1;
+                        }
+
+                        prev = i;
+                        prev_under = cur_under;
+                    }
+
+                    if (intersections_num % 2 == 1)
+                    {
+                        bool IsDouble = false;
+                        for (int i = 0; i < ChangeSector.Count; i++)
+                        {
+                            if (ChangeSector[i].CodeTradePoint == TrPoint.CodeTradePoint)
+                            {
+                                IsDouble = true;
+                                break;
+                            }
+                        }
+                        if (!IsDouble)
+                            CountInDisrt++;
+
+                        ChangeSector.Add(TrPoint);//содержит точки из выделенной области
+                    }
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+
+        //--------------------Паналь 1, просмотр плана/факта-------------------
+        private void button1_Click_1(object sender, EventArgs e)//Вывод маршрутов в таблицу
         {
+            this.Cursor = Cursors.WaitCursor;
             dataGridView1.Rows.Clear();
             PointsInRoute.Clear();
             LFP.Clear();
@@ -489,12 +437,18 @@ namespace GmapTest
 
                         dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.ForeColor = Color.Red;
                     }
+
+                    Logger.Log.Info("Маршрут "+rt.Name+" "+plan+fact);
                 }
+
+               
             }
+            this.Cursor = Cursors.Default;
         }
 
         private string getFact(string codeGPS)//проверка наличия Факта
         {
+            Logger.Log.Info("Функция getFact()");
             string resStr = "";
             if (!Directory.Exists(Constants.Path_fact))
             {
@@ -524,6 +478,7 @@ namespace GmapTest
 
         private string getPlan(string name, string branch)//проверка наличия Плана
         {
+            Logger.Log.Info("Функция getPlan()");
             string resStr = "";
             if (!Directory.Exists(Constants.Path_plan))
             {
@@ -548,7 +503,7 @@ namespace GmapTest
                         FileInfo[] files = di.GetFiles();
                         foreach (FileInfo fi in files)//если найден файл с плановым маршрутом на указанную дату
                         {
-                            if (fi.Name==name+".ltp")// .Contains(name))
+                            if (fi.Name==name+".ltp")
                                 resStr += "П";
                         }
 
@@ -560,8 +515,9 @@ namespace GmapTest
             return resStr; ;
         }
 
-        private List<double> GetResultForGrid(string PathFact, string PathPlan)
+        private List<double> GetResultForGrid(string PathFact, string PathPlan)//функция для расчета основных параметров плана и факта
         {
+            Logger.Log.Info("Функция GetResultForGrid()");
             double WorkTime = 0;
             double WorkDist = 0;
             List<double> Result = new List<double>();
@@ -602,7 +558,6 @@ namespace GmapTest
                         DeltaTime = Constants.GetSeconds(dt) - Constants.GetSeconds(dt_old);
                         if (Dist < Constants.RADIUS_SMOOTH)
                         {
-                            //DeltaTime = GetSeconds(dt) - GetSeconds(dt_old);
                             dt_old_last = dt;
                             continue;
                         }
@@ -647,6 +602,7 @@ namespace GmapTest
 
         private double GetWorkTime(List<Point> pts)//расчет времени от посещения первой точки до последней
         {
+            Logger.Log.Info("Функция GetWorkTime()");
             DateTime MinT = pts.Min(Point => Point.FactTimeArrive);
             DateTime MaxT = pts.Max(Point => Point.FactTimeDepart);
             double ResTime = Math.Round((double)(Constants.GetSeconds(MaxT) - Constants.GetSeconds(MinT)) / 3600, 2);
@@ -658,6 +614,7 @@ namespace GmapTest
 
         public static double GetWorkDist(List<Point> pts)//расчет расстояния от посещения первой точки до последней
         {
+            Logger.Log.Info("Функция GetWorkDist()");
             double MinD = 1000000;
             foreach (Point pt in pts)
             {
@@ -674,6 +631,8 @@ namespace GmapTest
 
         private int GetVisitedPoints(List<Point> Plan, List<FactPoints> Fact)
         {
+            //подсчет количества посещенных точек, которые попадают в радиус остановки торгового представителя
+            Logger.Log.Info("Функция GetVisitedPoints()");
             int CountVisitedPts = 0;
             foreach (FactPoints fp in Fact)
             {
@@ -684,12 +643,13 @@ namespace GmapTest
 
         private int GetCountPlanPoint(string PathPlan)
         {
+            //расчет количества плановых точек посещения
+            Logger.Log.Info("Функция GetCountPlanPoint()");
             string[] Str = PathPlan.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             List<Point> Points = new List<Point>();
             int CountPlanTP = 0;
             if (File.Exists(PathPlan))
             {
-                //PointsInRoute = new Dictionary<string, List<Point>>();
                 StreamReader reader = new StreamReader(PathPlan, System.Text.Encoding.Default);
                 string s = "";
                 while (true)
@@ -715,13 +675,13 @@ namespace GmapTest
             }
             return 0;
         }
-        //-----------------------------------------------
-
-        
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            //отрисовка планового и фактического маршрута при клике на строке таблицы
+            Logger.Log.Info("Функция GetCountPlanPoint()");
             try { DrawPlanRoute(); } catch (Exception ex) { }
+            
 
             List<PointLatLng> FalseRoute = new List<PointLatLng>();
             List<FactPoints> LFP1 = new List<FactPoints>();
@@ -767,7 +727,6 @@ namespace GmapTest
 
                         if (Dist < Constants.RADIUS_SMOOTH)
                         {
-                            //DeltaTime = GetSeconds(dt) - GetSeconds(dt_old);
                             dt_old_last = dt;
                             continue;
                         }
@@ -775,11 +734,9 @@ namespace GmapTest
                         {
                             if (DeltaTime > Constants.STOP_TIME_IN_POINT && Dist < Constants.CRITICAL_DISTANCE)
                             {
-                                //LFP1.Add(new FactPoints(latRoute_old, lngRoute_old, dt_old, dt_old_last, 0));
                                 LFP1.Add(new FactPoints(latRoute_old, lngRoute_old, dt_old, dt, 0));
                                 GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(latRoute_old, lngRoute_old), new Bitmap("./images/stop.png"));// GMarkerGoogleType.red_small);
                                 marker.ToolTip = new GMapRoundedToolTip(marker);
-                                //marker.ToolTipText = "Остановка " + Math.Round((DeltaTime / 60), 1).ToString() + " мин\n(" + dt_old.ToLongTimeString() + "-" + dt_old_last.ToLongTimeString() + ")";
                                 marker.ToolTipText = "Остановка " + Math.Round((DeltaTime / 60), 1).ToString() + " мин\n(" + dt_old.ToLongTimeString() + "-" + dt.ToLongTimeString() + ")";
                                 markersOverlay.Markers.Add(marker);
                                 DeltaTime = 0;
@@ -803,8 +760,7 @@ namespace GmapTest
                     listGPS.Add(new PointLatLng(latRoute, lngRoute));
                     if (!ct)
                     {
-                        // dt_first = dt;
-                        GMarkerGoogle marker2 = new GMarkerGoogle(new PointLatLng(latRoute_old, lngRoute_old), new Bitmap("./images/man_begin.png"));
+                       GMarkerGoogle marker2 = new GMarkerGoogle(new PointLatLng(latRoute_old, lngRoute_old), new Bitmap("./images/man_begin.png"));
                         marker2.ToolTip = new GMapRoundedToolTip(marker2);
                         marker2.ToolTipText = "Начало маршрута " + dataGridView1.Rows[dataGridView1.CurrentRow.Index].Cells[1].Value.ToString() + "\n" +
                             dt_old.ToLongTimeString();
@@ -832,6 +788,12 @@ namespace GmapTest
                 gMapControl1.Position = new PointLatLng(latRoute, lngRoute);
 
                 DrawFalseRoutes(FalseRoute);
+                if (!Constants.firstDraw)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                    this.WindowState = FormWindowState.Maximized;
+                    Constants.firstDraw = true;
+                }
             }
             catch (Exception ex)
             { }
@@ -839,6 +801,8 @@ namespace GmapTest
 
         private void DrawCircle(List<FactPoints> fps)
         {
+            //отрисовка окружностей при остановке торгового агента для визуального контроля посещения торговой точки
+            Logger.Log.Info("Функция DrawCircle()");
             foreach (FactPoints fp in fps)
             {
                 List<PointLatLng> Poly = new List<PointLatLng>();
@@ -855,18 +819,18 @@ namespace GmapTest
             }
         }
 
-        private void ClearMap()
+        private void ClearMap()//очистить карту
         {
             gMapControl1.Overlays.Clear();
             markersOverlay.Markers.Clear();
-            markersOverlay.Clear();
-            
+            markersOverlay.Clear();            
             TradePoints.Clear();            
         }
 
         private void DrawFalseRoutes(List<PointLatLng> FalseRoute)
         {
-            //GMapOverlay markersOverlay2 = new GMapOverlay("marker2");
+            //Отрисовка прямой пунктирной линии при отсутствии данных от gps
+            Logger.Log.Info("Функция DrawFalseRoutes()"); 
             for (int i = 0; i < FalseRoute.Count; i = i + 2)
             {
                 List<PointLatLng> Line = new List<PointLatLng>();
@@ -883,30 +847,12 @@ namespace GmapTest
         }
 
         private void DrawPlanRoute()
-        {
+        { //Отрисовка планового маршрута зеленого цвета
             GMapOverlay markersOverlay1 = new GMapOverlay("marker1");
-            List<PointLatLng> RoutePlan = new List<PointLatLng>();
-            string[] StrPlan;
             string FilePath = Constants.Path_plan + DirName + "/" + comboBox2.Text +
                 "/" + dataGridView1.Rows[dataGridView1.CurrentRow.Index].Cells[1].Value.ToString() + ".ltp";
 
-            if (!File.Exists(FilePath))
-                return;
-
-            StreamReader reader = new StreamReader(FilePath, Encoding.Default);
-            string s = "";
-            while (true)
-            {
-                s = reader.ReadLine();
-                if (s == null || s == "")
-                    break;
-
-                StrPlan = s.Split(new Char[] { '\t', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                if (StrPlan[0] == "**")
-                    continue;
-                if (StrPlan[0] != "p")
-                    RoutePlan.Add(new PointLatLng(Convert.ToDouble(StrPlan[0]), Convert.ToDouble(StrPlan[1])));
-            }
+            List<PointLatLng> RoutePlan = Route.getPlanRoute(FilePath);
 
             foreach (Point p in PointsInRoute[dataGridView1.Rows[dataGridView1.CurrentRow.Index].Cells[1].Value.ToString()])
             {
@@ -943,141 +889,22 @@ namespace GmapTest
             gMapControl1.Position = new PointLatLng(TradePoints[TradePoints.Count - 1].X, TradePoints[TradePoints.Count - 1].Y);
         }
 
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
-
-        }
-
-        private List<string> GetPlanRoutes(DateTime dt)//получаем список названий плановых маршрутов
-        {
-            string id_branch = "";
-            string id_user = "";
-            List<int> ListRoutes = new List<int>();
-            List<string> ListRoutesNames = new List<string>();
-
-            SQLiteConnection m_dbConn = new SQLiteConnection();
-            SQLiteCommand m_sqlCmd = new SQLiteCommand();
-            m_dbConn = new SQLiteConnection("Data Source=" + dbFileNameAutorization + ";Version=3;");
-            m_dbConn.Open();
-            m_sqlCmd.Connection = m_dbConn;
-
-           // m_sqlCmd.CommandText = "SELECT id FROM branches WHERE branch='" + comboBox3.Text + "'";
-            id_branch = m_sqlCmd.ExecuteScalar().ToString();
-
-            /*if (Login != "Admin")
+            Logger.Log.Info("Функция dataGridView1_DoubleClick()");
+            try
             {
-                m_sqlCmd.CommandText = "SELECT id FROM users WHERE login='" + Login + "'";
-                id_user = m_sqlCmd.ExecuteScalar().ToString();
-
-                m_sqlCmd.CommandText = "SELECT id_routes FROM result_table_auto WHERE id_user=" + id_user + " AND id_branch=" + id_branch + " AND team='" + comboBox4.Text + "'";
-                SQLiteDataReader reader1 = m_sqlCmd.ExecuteReader();
-                while (reader1.Read())
-                {
-                    ListRoutes.Add(Convert.ToInt32(reader1[0].ToString()));
-                }
-                reader1.Close();
-                foreach (int num in ListRoutes)
-                {
-                    m_sqlCmd.CommandText = "SELECT route_name FROM routes WHERE id=" + num.ToString();
-                    ListRoutesNames.Add(m_sqlCmd.ExecuteScalar().ToString());
-                }
+                string Name = dataGridView1.Rows[dataGridView1.CurrentCellAddress.Y].Cells[1].Value.ToString();
+                PointsInRoute PR = new PointsInRoute(comboBox1.Text, Name, PointsInRoute[Name], dateTimePicker1.Value);
+                PR.ShowDialog();
             }
-            else
+            catch (Exception ex)
             {
-                m_sqlCmd.CommandText = "SELECT route_name FROM routes WHERE id_branch=" + id_branch + " AND team='" + comboBox4.Text + "'";
-                SQLiteDataReader reader1 = m_sqlCmd.ExecuteReader();
-                while (reader1.Read())
-                {
-                    ListRoutesNames.Add(reader1[0].ToString());
-
-                }
-                reader1.Close();
-
-            }
-            m_dbConn.Close();
-            return ListRoutesNames;*/
-            return null;
-        }
-
-       /* private void SetFactInGrid(string DirName, List<string> PlanRoutes)//заносит данные в таблицу
-        {
-            List<double> ResParam = new List<double>();
-            List<string> CodesGPS = new List<string>();
-            CodesGPS = GetCodes(PlanRoutes);
-
-            string PathPlan = Constant.Path_plan + dateTimePicker1.Value.Month.ToString().PadLeft(2, '0') + "_" + dateTimePicker1.Value.Year.ToString() +
-                "/" + dateTimePicker1.Value.DayOfWeek + "/" + comboBox3.Text + "/" + comboBox4.Text + "/";
-            int countRow = 0;
-            DirectoryInfo info = new DirectoryInfo(Constants.Path_fact + "/" + DirName);
-            FileInfo[] files = info.GetFiles();
-            foreach (FileInfo fi in files)
-            {
-                if (!CodesGPS.Contains(fi.Name))//если данного имени файла нет в списке кодов разрешенных маршрутов, то дальше не идем 
-                    continue;
-                string s = GetFactRouteName(fi.Name);//в name указан код.gps
-                if (s != null)
-                {
-                    ResParam = GetResultForGrid(Constant.Path_fact + "/" + DirName + "/" + fi.Name, PathPlan + s + ".ltp");
-                    if (File.Exists(PathPlan + s + ".ltp"))
-                    {
-                        dataGridView1.Rows.Add(++countRow, s, "ФП", ResParam[0], ResParam[1], ResParam[2], ResParam[3], ResParam[4], ResParam[5]);
-                        PlanRoutes.Remove(s);
-                    }
-                    else
-                    {
-                        dataGridView1.Rows.Add(++countRow, s, "Ф", "", "", ResParam[2], "", ResParam[4]);
-                        dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.ForeColor = Color.Red;
-                        PlanRoutes.Remove(s);
-                    }
-                }
-            }
-
-            foreach (string s in PlanRoutes)
-            {
-                int NumPlanPoints = GetCountPlanPoint(PathPlan + s + ".ltp");
-                if (NumPlanPoints == 0)
-                    dataGridView1.Rows.Add(++countRow, s, "--");
-                else
-                    dataGridView1.Rows.Add(++countRow, s, "П", NumPlanPoints);
-                dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.ForeColor = Color.Red;
-            }
-
-        }
-
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            if (!toolStripButton4.Checked)
-            {
-                SumDist = 0;
-                StartFinish = false;
-                TwoPointDist.Clear();
-                CountPts = 0;
-                markersOverlayStartFin.Clear();
-                gMapControl1.Overlays.Clear();
-                gMapControl1.Zoom += 0.1;
-                gMapControl1.Zoom -= 0.1;
+                MessageBox.Show("По данному маршруту отсутствуют плановые точки!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Logger.Log.Info("Отсутствуют плановые точки!");
             }
         }
 
-        /* private void ReDrawPoints()
-         {
-             gMapControl1.Overlays.Clear();
-             for (int r = markersOverlay.Markers.Count - 1; r >= 0; r--)
-                 markersOverlay.Markers.RemoveAt(r);
-
-             for (int i = 0; i < Reg.TradePoints.Count; i++)
-             {
-                 GMarkerGoogle marker = null;
-                 if (Reg.TradePoints[i].CodeTradePoint == "Start")
-                     marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), GMarkerGoogleType.pink_dot);
-                 else
-                     marker = new GMarkerGoogle(new PointLatLng(Reg.TradePoints[i].X, Reg.TradePoints[i].Y), col[Reg.TradePoints[i].Color]);
-                 marker.ToolTip = new GMapRoundedToolTip(marker);
-                 marker.ToolTipText = Reg.TradePoints[i].Number.ToString() + "_" + Reg.TradePoints[i].Adress;
-                 markersOverlay.Markers.Add(marker);
-             }
-             gMapControl1.Overlays.Add(markersOverlay);
-             gMapControl1.Refresh();
-         }*/
+        //--------------------Панель 1 вверх, просмотр плана/факта-------------------
     }
 }
