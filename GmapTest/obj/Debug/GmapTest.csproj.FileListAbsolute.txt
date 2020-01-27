@@ -1029,3 +1029,5 @@ E:\TradeAgent\GmapTest\bin\Debug\log4net.xml
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.Authorization.resources
 E:\TradeAgent\GmapTest\bin\Debug\x86\sqlite3.dll
 E:\TradeAgent\GmapTest\bin\Debug\x64\sqlite3.dll
+D:\TradeAgent\GmapTest\bin\Debug\x86\sqlite3.dll
+D:\TradeAgent\GmapTest\bin\Debug\x64\sqlite3.dll
