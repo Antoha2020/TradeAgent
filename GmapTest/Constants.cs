@@ -28,6 +28,20 @@ namespace GmapTest
         public const string Path_plan = "./Plan routes/";//путь, по которому находятся плановые маршруты
 
         public static bool firstDraw = false;
+        public static int EmptyCell = 1000000;//признак пустой ячейки
+        public static int FirstMinCell = 10000;//начальное значение минимального элемента
+        public static double SpeedCarHW = 45;//скорость на машине по трассе
+        public static double SpeedCar = 32;//скорость на машине
+        public static double SpeedFoot = 3;//скорость пешком
+        public static int MaxVisitTP = 1;
+        public static int EndRt = 1000000;
+        public static string NameProg = "Расчет маршрутов торговых представителей";
+        public static int MaxIterations = 50000;//максимальное количество попыток изменения привязки точки, 
+                                                //после превышения просит перепривязать точку вручную
+        public static double MinDeltaXOSM = 0.00001;
+        public static double MinDeltaYOSM = 0.00001;
+        public static double WorkTime = 3.5;//продолжительность рабочего времени
+
         public static double getDistance(double lt1, double ln1, double lt2, double ln2)//вычисляет расстояние между двумя точками
         {
             // перевести координаты в радианы
