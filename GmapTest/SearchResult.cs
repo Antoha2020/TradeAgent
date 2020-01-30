@@ -16,11 +16,6 @@ namespace GmapTest
     public class Geometry
     {
         public string type { get; set; }
-        //public string name { get; set; }
-        //public Dictionary<double, double> coordinates = new Dictionary<double, double>();// {new double(), new double() };
-        //public List<double> coordinates = new List<double>();
-        //public string coordinates { get; set; }
-        //double[] Coordinates;
         double[,] Coordinates;
 
         public double[,] coordinates

@@ -804,8 +804,6 @@ E:\TradeAgent\GmapTest\bin\Debug\protobuf-net.dll
 E:\TradeAgent\GmapTest\bin\Debug\Reminiscence.dll
 E:\TradeAgent\GmapTest\bin\Debug\System.Buffers.dll
 E:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.dll
-E:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.EF6.dll
-E:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.Linq.dll
 E:\TradeAgent\GmapTest\bin\Debug\System.Memory.dll
 E:\TradeAgent\GmapTest\bin\Debug\System.Net.Http.Extensions.dll
 E:\TradeAgent\GmapTest\bin\Debug\System.Net.Http.Primitives.dll
@@ -843,7 +841,6 @@ E:\TradeAgent\GmapTest\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.App.config
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.csprojResolveAssemblyReference.cache
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.exe.config
-E:\TradeAgent\GmapTest\obj\Debug\GmapTest.Fact.resources
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.Form1.resources
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.Properties.Resources.resources
 E:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.GenerateResource.cache
@@ -974,8 +971,6 @@ D:\TradeAgent\GmapTest\bin\Debug\protobuf-net.dll
 D:\TradeAgent\GmapTest\bin\Debug\Reminiscence.dll
 D:\TradeAgent\GmapTest\bin\Debug\System.Buffers.dll
 D:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.dll
-D:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.EF6.dll
-D:\TradeAgent\GmapTest\bin\Debug\System.Data.SQLite.Linq.dll
 D:\TradeAgent\GmapTest\bin\Debug\System.Memory.dll
 D:\TradeAgent\GmapTest\bin\Debug\System.Net.Http.Extensions.dll
 D:\TradeAgent\GmapTest\bin\Debug\System.Net.Http.Primitives.dll
@@ -1013,7 +1008,6 @@ D:\TradeAgent\GmapTest\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.App.config
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.csprojAssemblyReference.cache
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.exe.config
-D:\TradeAgent\GmapTest\obj\Debug\GmapTest.Fact.resources
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.Form1.resources
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.Properties.Resources.resources
 D:\TradeAgent\GmapTest\obj\Debug\GmapTest.csproj.GenerateResource.cache

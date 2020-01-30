@@ -26,6 +26,7 @@ namespace GmapTest
         public const string Path_fact = "./Fact routes";
         public const string Path_db = "./DB";
         public const string Path_plan = "./Plan routes/";//путь, по которому находятся плановые маршруты
+        //public const string Path_plan = "./Plan routes/";//путь, по которому находятся плановые маршруты
 
         public static bool firstDraw = false;
         public static int EmptyCell = 1000000;//признак пустой ячейки

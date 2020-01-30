@@ -59,128 +59,69 @@ namespace GmapTest
             return listRoutes;
         }
 
-        public Dictionary<long,PointLatLng> getDataTEST(string table)
-        {
-            try
-            {
-                //String result = "";
-                Dictionary<long, PointLatLng> fact = new Dictionary<long, PointLatLng>();
-                conn.Open();
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM " + table;
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    fact.Add(Convert.ToInt64(reader[1]), new PointLatLng(Convert.ToDouble(reader[2]), Convert.ToDouble(reader[3])));
-                    //result = reader[2].ToString() + "  " + reader[2].ToString() + "  " + reader[3].ToString();
-                }
-                conn.Close();
-                return fact;
-            }
-            catch { return null; }
-        }
 
-        public List<PointLatLng> getDataListTEST(string table)
+        public static List<string> getPoints(string Code)
         {
-            try
-            {
-
-                //String result = "";
-                List<PointLatLng> fact = new List<PointLatLng>();
-                conn.Open();
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM " + table;
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    fact.Add(new PointLatLng(Convert.ToDouble(reader[2].ToString().Replace(".",",")), Convert.ToDouble(reader[3].ToString().Replace(".",","))));
-                    //result = reader[2].ToString() + "  " + reader[2].ToString() + "  " + reader[3].ToString();
-                }
-                conn.Close();
-                return fact;
-            }
-            catch { return null; }
-        }
-
-        public List<PointLatLng> getPointsTEST(List<int> idPoints)
-        {
-            List<PointLatLng> result = new List<PointLatLng>();
+            bool enter = false;
+            List<string> listData = new List<string>();
+            DBConnection();
             conn.Open();
             MySqlCommand cmd = conn.CreateCommand();
-            foreach (int id in idPoints)
+            cmd.CommandText = "SELECT name_contragent FROM tradePoints WHERE code='" + Code.Trim() + "'";
+            MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                cmd.CommandText = "SELECT lat, lon FROM tradePoints where id=" + id.ToString();
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    result.Add(new PointLatLng(Convert.ToDouble(reader[0].ToString()), Convert.ToDouble(reader[1].ToString())));
-                }
-                reader.Close();
+                listData.Add(reader["name_contragent"].ToString());
+                enter = true;
+                break;
             }
-            conn.Close();
-            return result;
-        }
+            if (!enter)
+                listData.Add("-");
+            enter = false;
+            reader.Close();
 
-        public void insertFactTEST(List<double> lat, List<double> lon, List<long> time)
-        {
-            List<PointLatLng> result = new List<PointLatLng>();
-            conn.Open();
-            MySqlCommand cmd = conn.CreateCommand();
-            for(int i=0;i<lat.Count;i++)
+            cmd.CommandText = "SELECT name_point FROM tradePoints WHERE code='" + Code.Trim() + "'";
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                cmd.CommandText = "INSERT INTO route2222_17122019(timestamp,latitude,longitude)" +
-                    "values(" + time[i] + ",'" + lat[i] + "','" + lon[i] + "')";
-                cmd.ExecuteNonQuery();
+                listData.Add(reader["name_point"].ToString());
+                enter = true;
+                break;
             }
-            conn.Close();
-        }
+            if (!enter)
+                listData.Add("-");
+            enter = false;
+            reader.Close();
 
-        public void insertSerializeTEST(string imei, string date, string factRoute)
-        {
-            conn.Open();
-            MySqlCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "INSERT INTO routes(imei,date,factRoute)" + "values('" + imei + "','" + date + "','" + factRoute + "')";
-            cmd.ExecuteNonQuery();
-            conn.Close();
-        }
-
-        public string getSerialTEST()
-        {
-            try
+            cmd.CommandText = "SELECT work_time_beg FROM tradePoints WHERE code='" + Code.Trim() + "'"; 
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                String result = "";
-                List<PointLatLng> fact = new List<PointLatLng>();
-                conn.Open();
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT factRoute FROM routes where imei='1111'";
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    // fact.Add(new PointLatLng(Convert.ToDouble(reader[2]), Convert.ToDouble(reader[3])));
-                    result = reader[0].ToString();// + "  " + reader[2].ToString() + "  " + reader[3].ToString();
-                }
-                conn.Close();
-                return result;
+                listData.Add(reader["work_time_beg"].ToString());
+                enter = true;
+                break;
             }
-            catch { return null; }
-        }
+            if (!enter)
+                listData.Add("-");
+            enter = false;
+            reader.Close();
 
-        public List<TransObject> getTransObjects()
-        {
-            List<TransObject> result = new List<TransObject>();
-            conn.Open();
-            MySqlCommand cmd = conn.CreateCommand();
-            
-                cmd.CommandText = "SELECT * FROM objects";
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    result.Add(new TransObject(reader["garageNumber"].ToString(), reader["model"].ToString(),reader["imei"].ToString()));
-                }
-                reader.Close();
-            
+            cmd.CommandText = "SELECT work_time_end FROM tradePoints WHERE code='" + Code.Trim() + "'";
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                listData.Add(reader["work_time_end"].ToString());
+                enter = true;
+                break;
+            }
+            if (!enter)
+                listData.Add("-");
+            enter = false;
+            reader.Close();
             conn.Close();
-            return result;
+
+            return listData;
         }
+        
     }
 }
